@@ -37,7 +37,6 @@ Use this as a starting point for your own VS Code extension development.
 - `src/extension.ts`: The main extension file where activation and contributions are registered.
 - `src/sidebarWebview.ts`: Implements the `WebviewViewProvider` for the sidebar webview.
 - `src/customEditor.ts`: Implements the `CustomEditorProvider` for the custom editor webview.
-- `media/index.html`: The HTML content for the webviews.
 - `package.json`: The extension manifest.
 
 ## Building and Packaging

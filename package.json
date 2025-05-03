@@ -11,7 +11,7 @@
   },
   "categories": [
     "Other",
-    "Source Control"
+    "SCM Providers"
   ],
   "keywords": [
     "vscode",
@@ -21,7 +21,8 @@
     "gui"
   ],
   "activationEvents": [
-    "onStartupFinished"
+    "onStartupFinished",
+    "onView:jturnwebview"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -35,23 +36,31 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "jturnExplorer",
-          "title": "J-Turn",
-          "icon": "$(file-code)"
+          "icon": "icon.png",
+          "id": "jturnSidebar",
+          "title": "J-Turn"
         }
       ]
     },
     "views": {
-      "jturnExplorer": [
+      "jturnSidebar": [
         {
-          "id": "jturnSidebar",
-          "name": "Sidebar View"
+          "type": "webview",
+          "icon": "icon.png",
+          "id": "jturn.jturnwebview",
+          "name": "Sidebar Web View"
+        },
+        {
+          "type": "tree",
+          "icon": "icon.png",
+          "id": "jturn.jturnTreeview",
+          "name": "Sidebar Tree View"
         }
       ]
     },
     "customEditors": [
       {
-        "viewType": "jturnCustomEditor",
+        "viewType": "jturn.customEditor",
         "displayName": "Custom Editor",
         "selector": [
           {

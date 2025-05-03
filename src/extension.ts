@@ -1,29 +1,30 @@
 // extension.ts
 import * as vscode from 'vscode';
-import { SidebarWebviewProvider } from './sidebarWebview';
-import { CustomEditorProvider } from './customEditor';
+import { SidebarWebviewProvider, SidebarTreeViewProvider } from './sidebarWebview';
+import { showGitGraph } from './gitGraph';
 
 export function activate(context: vscode.ExtensionContext) {
 
-	console.log('Congratulations, your extension "extension-template" is now active!');
+	console.log('Congratulations, your extension "jturn" is now active!');
 
-	// Register the Hello World command
-	let disposable = vscode.commands.registerCommand('extension-template.helloWorld', () => {
-		vscode.window.showInformationMessage('Hello World from extension-template!');
+	// Register the Hello World command which will show the git graph panel
+	let disposable = vscode.commands.registerCommand('jturn.helloWorld', () => {
+		showGitGraph(context.extensionUri);
 	});
 
 	context.subscriptions.push(disposable);
 
-	// Register the Sidebar Webview Provider
-	const sidebarProvider = new SidebarWebviewProvider(context.extensionUri);
-	context.subscriptions.push(
-		vscode.window.registerWebviewViewProvider(SidebarWebviewProvider.viewId, sidebarProvider)
-	);
+	// Register the Sidebar Tree View Provider
+	const treeViewProvider = new SidebarTreeViewProvider();
+	const disp = vscode.window.registerTreeDataProvider('jturn.jturnTreeview', treeViewProvider);
+	context.subscriptions.push(disp);
 
-	// Register the Custom Editor Provider
-	context.subscriptions.push(
-		vscode.window.registerCustomEditorProvider(CustomEditorProvider.viewType, new CustomEditorProvider(context.extensionUri))
-	);
+	const outputChannel = vscode.window.createOutputChannel('J-Turn Logs');
+	outputChannel.appendLine('Registering Sidebar Webview Provider'); // Log to custom output channel
+
+	const sidebarWebviewProvider = new SidebarWebviewProvider(context.extensionUri, outputChannel);
+	const disp2 = vscode.window.registerWebviewViewProvider('jturn.jturnwebview', sidebarWebviewProvider);
+	context.subscriptions.push(disp2);
 }
 
 export function deactivate() { }
