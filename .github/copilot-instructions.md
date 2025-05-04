@@ -20,15 +20,15 @@ This project adheres to the following core development philosophies:
 
 ### 0. Pre-development checks
 
-Before answering any questions at all, help the user by helping them to clean up their environment if needed. Run `jj status`, and summarize the output. It's usually OK to continue but the user might want to revert them with `jj abandon`.
+Before answering any questions at all, help the user by helping them to clean up their environment if needed. Run `jj status`, and summarize the output to the user. It might be that we are in the middle of development - if so, it will show which stage we are in.
 
 ### 1. Requirements gathering
 
 First: `jj new -m "Requirements gathering: <task description>"`
 
-Collaborate with the user, including pushing the user (it is for the best) to clarify requirements. The output for this process is a detailed concrete summary of one or more test cases. DO NOT proceed unless both you and the user have clearly and explicitly agreed to begin implementing that test plan.
+Collaborate with the user, including pushing the user (it is for the best) to clarify requirements. The output for this process is a detailed concrete summary of one or more test cases, to be written as a comment in a test file. DO NOT proceed unless both you and the user have clearly and explicitly agreed to begin implementing that test plan.
 
-Write the test plan as a comment where the tests will be implemented.
+Ask the user if the plan is OK. If it is, write the test plan as a comment where the tests will be implemented.
 
 ### 2. Implement automated tests
 
