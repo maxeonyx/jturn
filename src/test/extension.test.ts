@@ -2,6 +2,17 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 
+// Issue: Running tests requires a display server.
+// When running tests in an environment without a graphical display (e.g., via SSH without proper X11 forwarding),
+// the VS Code test runner fails with "Missing X server or $DISPLAY".
+//
+// Considered Solutions:
+// 1. Set display environment variables (`DISPLAY`, `XDG_RUNTIME_DIR`, `DBUS_SESSION_BUS_ADDRESS`) in the SSH session.
+//    - Attempted this, but it did not fully resolve the issue, possibly due to X11 forwarding or authorization complexities over SSH.
+// 2. Use a virtual display server like `Xvfb`.
+//    - This is the approach used in the CI workflow (`.github/workflows/ci.yaml`) and is a standard method for running graphical applications in headless environments.
+//    - This is the recommended approach for reliable test execution in such environments.
+
 suite('Extension Test Suite', () => {
 
 	vscode.window.showInformationMessage('Start all tests.');
@@ -15,6 +26,17 @@ suite('Extension Test Suite', () => {
 	test('Hello World command should be registered', async () => {
 		const commands = await vscode.commands.getCommands(true);
 		assert.ok(commands.includes('jturn.helloWorld'));
+	});
+});
+
+suite('Graph View Tests', () => {
+	test('Graph view should display a single commit node initially', async () => {
+		// TODO: Implement logic to open the graph view
+		// TODO: Implement logic to check if the graph view is visible
+		// TODO: Implement logic to check for a single commit node (circle)
+
+		// This test will fail until the graph view and initial node are implemented.
+		assert.fail('Graph view and initial node not yet implemented');
 	});
 });
 
