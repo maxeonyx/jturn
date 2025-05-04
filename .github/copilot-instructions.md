@@ -1,6 +1,6 @@
 # Instructions to the assistant
 
-Your primary role as an assistant for this project is to **collaborate** with the user. You are not here to autonomously write code, unless given explicit instruction to do so. You *are* here to push back, clarify, guide, and ensure the process is followed correctly and efficiently. Take your time, think through each step, and demonstrate this to the user when you ask for permission to proceed. The user knows this process so be concise.
+Your primary role as an assistant for this project is to **collaborate** with the user. You are not here to just autonomously write code, unless given explicit instruction to do so. You *are* here to push back, clarify, guide, and ensure you follow the process correctly and efficiently. Take your time, think through each step, and demonstrate this to the user when you ask for permission to proceed. The user knows the process already, so you can be concise.
 
 Below is some guidance to you, and rules to follow when assisting the user on this project.
 
@@ -10,17 +10,19 @@ This project adheres to the following core development philosophies:
 
 1.  **Quality First:** Prioritize code quality and user experience above all else. Remember the principle: "The best part is no part. The best code is no code." Strive for elegant and minimal solutions, even if they require more effort or uncertainty upfront.
 
-3.  **Testing:** Testing is fundamental, and testing early ensures requirements are understood. Always write tests early before writing the production code (TDD). Ensure every feature has at least one corresponding test.
+2.  **Testing:** Testing is fundamental, and testing early ensures requirements are understood. Always write tests early before writing the production code (TDD). Ensure every feature has at least one corresponding test.
 
-2  **Iterative Improvement:** Make changes in small, independent steps. Each change should be well-tested and contribute incrementally to the overall goal.
+3.  **Iterative Improvement:** Make changes in small, independent steps. Each change should be well-tested and contribute incrementally to the overall goal.
 
-4.  **Simplicity:** Maintain a clean and minimal codebase. Well-behaved code is easier to understand, maintain, and debug. Always consider what other code could be removed or simplified.
+4.  **Simplicity:** Maintain a clean and minimal codebase. Well-behaved code is easier to understand, maintain, and debug. Always consider what other code could be removed or simplified. The simplicity of the user interface is foremost. Then, the simplicity of the production code. Lastly, the simplicity of tests and the development process itself is important too.
 
 ## Development process (STRICT REQUIREMENTS)
 
+Note that this process applies to code changes. If only changing documentation or comments, step 0. still applies but a revision titled "Documentation: ..." or "Comment: ..." can be created instead.
+
 ### 0. Pre-development checks
 
-Before answering any questions at all, help the user by helping them to clean up their environment if needed. Run `jj status`, and summarize the output to the user. It might be that we are in the middle of development - if so, it will show which stage we are in.
+Before answering any questions at all, help the user by helping them to clean up their environment if needed. Run `jj status`, and summarize the output to the user. It might be that we are in the middle of development - if so, the message will indicate stage we are in. Note that there's no need to commit anything, as `jj` does that automatically.
 
 ### 1. Requirements gathering
 
@@ -100,6 +102,7 @@ To push: `jj git push --allow-new`
 
 ## General Guidance
 
+* Committing: In JJ, changes are always "committed" in a sense, and there is no need for an explicit commit step before running most commands. Instead, run `jj new` when moving onto something new (as above).
 * Branching: Since we are using `jj` for version control, branching can be easily changed later. Just follow the process above.
 
 * **Test-Driven Development (TDD):** Adhere strictly to the principles of Test-Driven Development.
@@ -149,9 +152,6 @@ Here are some frequently asked questions and their answers to guide your develop
 
 * **IF: I am being asked to get an overview before starting**
   **THEN:** Read `instruction.Md`, `PLAN.md`, `README.md`.
-
-* **IF: I am being asked to make any changes (including run commands)**
-  **THEN:** First check if there are any uncommitted changes. If so, commit those changes to ensure a clean environment. Then, check if you are on a branch. If not, ask the user for a branch name.
 
 ## Supporting documents
 
