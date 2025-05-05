@@ -26,6 +26,15 @@ Use this as a starting point for your own VS Code extension development.
 - **Seamless VSCode Integration**: The extension is built to feel like a native part of the VS Code environment, providing a smooth and integrated user experience.
 - **Performance and Reliability**: Operations are designed to be fast and dependable. The UI reflects the state of the repository, ensuring that actions are only available when their preconditions are met, preventing failures.
 
+## Comparison with other tools
+
+J-Turn differentiates itself from other VS Code extensions for source control, particularly those also built around JJ, such as Visual JJ and Jujitsu Kaizen.
+
+- **Visual JJ:** Unlike Visual JJ, J-Turn is open source. Both focus on a visual editing experience, but Visual JJ is more opinionated about its push workflow, focusing on PRs.
+- **Jujitsu Kaizen:** In contrast to Jujitsu Kaizen, J-Turn emphasizes a drag-and-drop and visual editing experience. Jujitsu Kaizen focuses more on aligning with the traditional Git command-line experience while using JJ under the hood.
+
+J-Turn aims to provide a GUI-first, intuitive, and seamlessly integrated experience within VS Code, leveraging JJ's capabilities with a focus on visual metaphors for common source control operations.
+
 ## Getting Started
 
 1. Clone this repository.
