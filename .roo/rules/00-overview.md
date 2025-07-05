@@ -18,3 +18,6 @@ Refer to the respective documents for detailed guidelines.
 
 ## Expansion
 The AI assistant is responsible for expanding this overview. As subfolder directories are created, this overview should be expanded to include short summaries and links to their respective `README.md` files for easier navigation and reference.
+
+### Demos
+- **Commit Graph Demo**: Demonstrates rendering a commit graph with responsive SVG lines and a multi-column layout. See [`demo/graph/index.html`](demo/graph/index.html).

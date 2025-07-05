@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commit Graph Demo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>Commit Graph Demo</h1>
+        <div class="controls">
+            <label for="graph-select">Choose a graph:</label>
+            <select id="graph-select">
+                <option value="branch">Simple Branching</option>
+                <option value="trunk">Trunk, Merges and Branches</option>
+                <option value="complex">Complex History</option>
+                <option value="non_planar">Non-Planar Graph</option>
+            </select>
+        </div>
+    </header>
+    <main id="graph-container"></main>
+    <script src="data.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>

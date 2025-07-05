@@ -28,7 +28,7 @@ The app is deployed via GitHub workflows to GitHub Pages. The AI assistant must 
   - Ensure GitHub Pages is enabled in repository Settings > Pages.
   - Set the source to "GitHub Actions".
 - **Workflow File**
-  - `.github/workflows/static.yml` is configured for deploying the Vue.js app.
+  - `.github/workflows/site.yml` is configured for deploying the Vue.js app.
 
 ## Deployment of Demos
 - Deploy all demos as a conglomerate to GitHub Pages.

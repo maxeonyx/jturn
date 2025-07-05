@@ -1,0 +1,104 @@
+/* A universal box-sizing rule is a best practice for predictable layouts. */
+*,
+*::before,
+*::after {
+    /* A universal box-sizing rule is a best practice for predictable layouts. */
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #22272e;
+    color: #c9d1d9;
+    margin: 0;
+    padding: 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #444c56;
+}
+
+h1 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+#graph-container {
+    position: relative;
+    display: grid;
+    /* The grid has 4 columns:
+       1. Graph Area: A fixed width determined by JS based on graph complexity.
+       2. Commit Message: Takes up the remaining flexible space.
+       3. Author: Shrinks to fit content.
+       4. Date: Shrinks to fit content. */
+    grid-template-columns: var(--graph-width, 100px) 1fr auto auto;
+}
+
+.cell {
+    padding: 6px 10px;
+    /* Increased padding slightly for better vertical separation */
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #30363d;
+    white-space: nowrap;
+}
+
+.graph-cell {
+    grid-column: 1;
+    position: relative;
+    /* Establishes a coordinate system for the SVG overlay. */
+    padding: 0;
+    /* This inner grid is used to place the commit nodes in the correct column. */
+    display: grid;
+    grid-template-columns: repeat(var(--max-columns, 1), var(--column-width, 20px));
+    align-items: center;
+    justify-items: center;
+}
+
+.commit-node {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--commit-color, #888);
+    border: 2px solid #22272e;
+    z-index: 2;
+    grid-row: 1;
+}
+
+.message-cell {
+    grid-column: 2;
+}
+
+.author-cell {
+    grid-column: 3;
+    color: #8b949e;
+}
+
+.date-cell {
+    grid-column: 4;
+    color: #8b949e;
+}
+
+#svg-container {
+    /* The SVG container is absolutely positioned to overlay the graph-cells. */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--graph-width, 100px);
+    height: 100%;
+    /* Clicks should pass through the SVG to the elements underneath. */
+    pointer-events: none;
+    z-index: 1;
+    /* Ensures lines are drawn behind nodes but above the background. */
+}
+
+.svg-line {
+    fill: none;
+    stroke-width: 2px;
+    stroke: var(--commit-color);
+}

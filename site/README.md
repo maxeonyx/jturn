@@ -13,6 +13,6 @@ To run the site locally:
 2. Start the development server: `npm run dev`
 
 ## Deployment
-The site is deployed to GitHub Pages via [the GitHub Actions workflow](../.github/workflows/static.yml).
+The site is deployed to GitHub Pages via [the GitHub Actions workflow](../.github/workflows/site.yml).
 
 ---
