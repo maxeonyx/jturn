@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        :root {
+            --drop-star-size: 5em;
+            --segment-size: calc(var(--drop-star-size) / 2);
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: grid;
+            grid-template-columns: max-content max-content max-content;
+            gap: 2em;
+            padding: 2em;
+            box-sizing: border-box;
+        }
+
+        .drop-star {
+            position: relative;
+            width: var(--drop-star-size);
+            height: var(--drop-star-size);
+            margin: 1em;
+            padding: 0;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .drop-area {
+            transform: var(--hover-scale, scale(1)) var(--extra-transform, scale(1)) var(--hover-translate, translate(0, 0));
+            z-index: 0;
+        }
+
+        .drop-area:hover {
+            --hover-scale: scale(1.5);
+            --hover-translate: translate(-0.5em, -0.5em);
+            z-index: 10;
+        }
+
+        .drop-star .drop-area {
+            position: absolute;
+            box-sizing: border-box;
+            width: var(--segment-size);
+            height: var(--segment-size);
+            background: rgba(255, 0, 0, 0.6);
+            border: 0.0625em dashed rgba(255, 0, 0, 0.3);
+            border-radius: 0.125em;
+            left: 50%;
+            top: 50%;
+            transform-origin: top left;
+
+            /* Center the text */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            /* Apply the pre-calculated matrix transformation */
+            --extra-transform: var(--star-transform) translate(var(--extra-translate, 0));
+        }
+
+        /* Child elements that appear normal despite parent transformation */
+        .drop-area>* {
+            /* Apply inverse transformation to undo parent's rotation/scale */
+            transform: var(--star-transform-inverse, scale(1));
+            background: rgba(255, 255, 255, 0.9);
+            padding: 0.25em 0.5em;
+            border-radius: 4px;
+            color: #333;
+            font-weight: bold;
+            font-size: 0.8em;
+            pointer-events: none;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Reverse hover scale on child elements and add better hover effects */
+        .drop-area:hover>* {
+            /* Undo the parent's hover scale (1.5x) by applying 1/1.5 = 0.667x scale */
+            transform: var(--star-transform-inverse, scale(1)) scale(0.667);
+            /* Better hover effect: larger font instead of blur-prone scaling */
+            font-size: 1em;
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Star transformation matrices - auto-detect based on number of children */
+
+        /* 1-pointed star (single) - when there's only 1 child */
+        .drop-star .drop-area:nth-last-child(1):nth-child(1) {
+            --star-transform: translate(calc(-1 * var(--segment-size)), calc(-1 * var(--segment-size))) matrix(2, 0, 0, 2, 0, 0);
+            --star-transform-inverse: matrix(0.5, 0, 0, 0.5, 0, 0);
+            --hover-translate: translate(0, 0);
+        }
+
+        /* 2-pointed star (double) - when there are exactly 2 children */
+        .drop-star .drop-area:nth-last-child(2):nth-child(1) {
+            --star-transform: translate(calc(-1 * var(--segment-size)), calc(-1 * var(--segment-size))) matrix(2, 0, 0, 1, 0, 0);
+            --star-transform-inverse: matrix(0.5, 0, 0, 1, 0, 0);
+        }
+
+        .drop-star .drop-area:nth-last-child(2):nth-child(1):hover {
+            --hover-translate: translate(0, 0.5em);
+        }
+
+        .drop-star .drop-area:nth-last-child(1):nth-child(2) {
+            --star-transform: translate(calc(1 * var(--segment-size)), calc(1 * var(--segment-size))) matrix(-2, 0, 0, -1, 0, 0);
+            --star-transform-inverse: matrix(-0.5, 0, 0, -1, 0, 0);
+        }
+
+        .drop-star .drop-area:nth-last-child(1):nth-child(2):hover {
+            --hover-translate: translate(0, 0.5em);
+        }
+
+        /* 3-pointed star - when there are exactly 3 children */
+        .drop-star .drop-area:nth-last-child(3):nth-child(1) {
+            --star-transform: matrix(-1.125833, -0.650000, 1.125833, -0.650000, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(-0.444116, 0.444116, -0.769231, -0.769231, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(2):nth-child(2) {
+            --star-transform: matrix(1.125833, -0.650000, 0.000000, 1.300000, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(0.888231, 0.444116, -0.000000, 0.769231, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(1):nth-child(3) {
+            --star-transform: matrix(0.000000, 1.300000, -1.125833, -0.650000, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(-0.444116, -0.888231, 0.769231, 0.000000, 0.000000, 0.000000);
+        }
+
+        /* 4-pointed star - when there are exactly 4 children */
+        .drop-star .drop-area:nth-last-child(4):nth-child(1) {
+            --star-transform: matrix(-0.707107, -0.707107, 0.707107, -0.707107, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(-0.707107, 0.707107, -0.707107, -0.707107, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(3):nth-child(2) {
+            --star-transform: matrix(0.707107, -0.707107, 0.707107, 0.707107, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(0.707107, 0.707107, -0.707107, 0.707107, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(2):nth-child(3) {
+            --star-transform: matrix(0.707107, 0.707107, -0.707107, 0.707107, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(0.707107, -0.707107, 0.707107, 0.707107, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(1):nth-child(4) {
+            --star-transform: matrix(-0.707107, 0.707107, -0.707107, -0.707107, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(-0.707107, -0.707107, 0.707107, -0.707107, 0.000000, 0.000000);
+        }
+
+        /* 5-pointed star - when there are exactly 5 children */
+        .drop-star .drop-area:nth-last-child(5):nth-child(1) {
+            --star-transform: matrix(-0.587785, -0.809017, 0.587785, -0.809017, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(-0.850651, 0.850651, -0.618034, -0.618034, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(4):nth-child(2) {
+            --star-transform: matrix(0.587785, -0.809017, 0.951057, 0.309017, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(0.324920, 0.850651, -1.000000, 0.618034, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(3):nth-child(3) {
+            --star-transform: matrix(0.951057, 0.309017, 0.000000, 1.000000, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(1.051462, -0.324920, 0.000000, 1.000000, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(2):nth-child(4) {
+            --star-transform: matrix(0.000000, 1.000000, -0.951057, 0.309017, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(0.324920, -1.051462, 1.000000, 0.000000, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(1):nth-child(5) {
+            --star-transform: matrix(-0.951057, 0.309017, -0.587785, -0.809017, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(-0.850651, -0.324920, 0.618034, -1.000000, 0.000000, 0.000000);
+        }
+
+        /* 6-pointed star - when there are exactly 6 children */
+        .drop-star .drop-area:nth-last-child(6):nth-child(1) {
+            --star-transform: matrix(-0.500000, -0.866025, 0.500000, -0.866025, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(-1.000000, 1.000000, -0.577350, -0.577350, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(5):nth-child(2) {
+            --star-transform: matrix(0.500000, -0.866025, 1.000000, -0.000000, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(-0.000000, 1.000000, -1.154701, 0.577350, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(4):nth-child(3) {
+            --star-transform: matrix(1.000000, -0.000000, 0.500000, 0.866025, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(1.000000, 0.000000, -0.577350, 1.154701, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(3):nth-child(4) {
+            --star-transform: matrix(0.500000, 0.866025, -0.500000, 0.866025, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(1.000000, -1.000000, 0.577350, 0.577350, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(2):nth-child(5) {
+            --star-transform: matrix(-0.500000, 0.866025, -1.000000, 0.000000, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(0.000000, -1.000000, 1.154701, -0.577350, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(1):nth-child(6) {
+            --star-transform: matrix(-1.000000, -0.000000, -0.500000, -0.866025, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(-1.000000, 0.000000, 0.577350, -1.154701, 0.000000, 0.000000);
+        }
+
+        /* 7-pointed star - when there are exactly 7 children */
+        .drop-star .drop-area:nth-last-child(7):nth-child(1) {
+            --star-transform: matrix(-0.433884, -0.900969, 0.433884, -0.900969, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(-1.152382, 1.152382, -0.554958, -0.554958, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(6):nth-child(2) {
+            --star-transform: matrix(0.433884, -0.900969, 0.974928, -0.222521, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(-0.284615, 1.152382, -1.246980, 0.554958, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(5):nth-child(3) {
+            --star-transform: matrix(0.974928, -0.222521, 0.781831, 0.623490, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(0.797473, 0.284615, -1.000000, 1.246980, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(4):nth-child(4) {
+            --star-transform: matrix(0.781831, 0.623490, 0.000000, 1.000000, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(1.279048, -0.797473, -0.000000, 1.000000, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(3):nth-child(5) {
+            --star-transform: matrix(0.000000, 1.000000, -0.781831, 0.623490, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(0.797473, -1.279048, 1.000000, 0.000000, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(2):nth-child(6) {
+            --star-transform: matrix(-0.781831, 0.623490, -0.974928, -0.222521, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(-0.284615, -0.797473, 1.246980, -1.000000, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(1):nth-child(7) {
+            --star-transform: matrix(-0.974928, -0.222521, -0.433884, -0.900969, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(-1.152382, 0.284615, 0.554958, -1.246980, 0.000000, 0.000000);
+        }
+
+        /* 8-pointed star - when there are exactly 8 children */
+        .drop-star .drop-area:nth-last-child(8):nth-child(1) {
+            --star-transform: matrix(-0.382683, -0.923880, 0.382683, -0.923880, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(-1.306563, 1.306563, -0.541196, -0.541196, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(7):nth-child(2) {
+            --star-transform: matrix(0.382683, -0.923880, 0.923880, -0.382683, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(-0.541196, 1.306563, -1.306563, 0.541196, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(6):nth-child(3) {
+            --star-transform: matrix(0.923880, -0.382683, 0.923880, 0.382683, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(0.541196, 0.541196, -1.306563, 1.306563, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(5):nth-child(4) {
+            --star-transform: matrix(0.923880, 0.382683, 0.382683, 0.923880, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(1.306563, -0.541196, -0.541196, 1.306563, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(4):nth-child(5) {
+            --star-transform: matrix(0.382683, 0.923880, -0.382683, 0.923880, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(1.306563, -1.306563, 0.541196, 0.541196, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(3):nth-child(6) {
+            --star-transform: matrix(-0.382683, 0.923880, -0.923880, 0.382683, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(0.541196, -1.306563, 1.306563, -0.541196, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(2):nth-child(7) {
+            --star-transform: matrix(-0.923880, 0.382683, -0.923880, -0.382683, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(-0.541196, -0.541196, 1.306563, -1.306563, 0.000000, 0.000000);
+        }
+
+        .drop-star .drop-area:nth-last-child(1):nth-child(8) {
+            --star-transform: matrix(-0.923880, -0.382683, -0.382683, -0.923880, 0.000000, 0.000000);
+            --star-transform-inverse: matrix(-1.306563, 0.541196, 0.541196, -1.306563, 0.000000, 0.000000);
+        }
+
+
+        /* Color variations for dropzone segments using nth-child */
+        .drop-star .drop-area:nth-child(1) {
+            background-color: rgba(255, 0, 0, 0.3);
+        }
+
+        .drop-star .drop-area:nth-child(2) {
+            background-color: rgba(0, 255, 0, 0.3);
+        }
+
+        .drop-star .drop-area:nth-child(3) {
+            background-color: rgba(0, 0, 255, 0.3);
+        }
+
+        .drop-star .drop-area:nth-child(4) {
+            background-color: rgba(255, 255, 0, 0.3);
+        }
+
+        .drop-star .drop-area:nth-child(5) {
+            background-color: rgba(255, 0, 255, 0.3);
+        }
+
+        .drop-star .drop-area:nth-child(6) {
+            background-color: rgba(0, 255, 255, 0.3);
+        }
+
+        .drop-star .drop-area:nth-child(7) {
+            background-color: rgba(128, 128, 128, 0.3);
+        }
+
+        .drop-star .drop-area:nth-child(8) {
+            background-color: rgba(255, 128, 0, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="drop-star">
+        <div class="drop-area">
+            <div class="child-content">Uno</div>
+        </div>
+    </div>
+    <div class="drop-star">
+        <div class="drop-area">
+            <div class="child-content">Top</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">Bottom</div>
+        </div>
+    </div>
+    <div class="drop-star">
+        <div class="drop-area">
+            <div class="child-content">Top</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">Right</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">Left</div>
+        </div>
+    </div>
+    <div class="drop-star">
+        <div class="drop-area">
+            <div class="child-content">N</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">E</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">S</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">W</div>
+        </div>
+    </div>
+    <div class="drop-star">
+        <div class="drop-area">
+            <div class="child-content">1</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">2</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">3</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">4</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">5</div>
+        </div>
+    </div>
+    <div class="drop-star">
+        <div class="drop-area">
+            <div class="child-content">A</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">B</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">C</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">D</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">E</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">F</div>
+        </div>
+    </div>
+    <div class="drop-star">
+        <div class="drop-area">
+            <div class="child-content">α</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">β</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">γ</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">δ</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">ε</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">ζ</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">η</div>
+        </div>
+    </div>
+    <div class="drop-star">
+        <div class="drop-area">
+            <div class="child-content">⚀</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">⚁</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">⚂</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">⚃</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">⚄</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">⚅</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">⚆</div>
+        </div>
+        <div class="drop-area">
+            <div class="child-content">⚇</div>
+        </div>
+    </div>
+
+</html>
+
+</body>
+
+</html>

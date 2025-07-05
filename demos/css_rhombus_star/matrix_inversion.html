@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Inversion Demo</title>
+    <style>
+        body {
+            margin: 2em;
+            font-family: monospace;
+        }
+
+        .demo-container {
+            display: flex;
+            gap: 2em;
+            margin: 2em 0;
+        }
+
+        .test-box {
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 0, 0, 0.3);
+            border: 2px solid red;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .child-content {
+            background: rgba(0, 255, 0, 0.8);
+            padding: 0.5em;
+            border-radius: 4px;
+        }
+
+        /* Test Case 1: Simple rotation */
+        .test1 {
+            transform: rotate(45deg);
+        }
+
+        .test1 .child-content {
+            transform: rotate(-45deg);
+        }
+
+        /* Test Case 2: Scale and rotate */
+        .test2 {
+            transform: scale(1.5) rotate(30deg);
+        }
+
+        .test2 .child-content {
+            transform: rotate(-30deg) scale(0.66667);
+        }
+
+        /* Test Case 3: Complex matrix (like our star segments) */
+        .test3 {
+            transform: matrix(0.707, 0.707, -0.707, 0.707, 0, 0);
+        }
+
+        .test3 .child-content {
+            /* Inverse of matrix(0.707, 0.707, -0.707, 0.707, 0, 0) */
+            transform: matrix(0.707, -0.707, 0.707, 0.707, 0, 0);
+        }
+
+        /* Test Case 4: Matrix with translation (like our star segments) */
+        .test4 {
+            transform: translate(50px, 30px) matrix(0.707, 0.707, -0.707, 0.707, 0, 0);
+        }
+
+        .test4 .child-content {
+            /* Only invert the matrix part, keep the translation */
+            transform: matrix(0.707, -0.707, 0.707, 0.707, 0, 0);
+        }
+
+        /* Test Case 5: Full matrix with translation embedded */
+        .test5 {
+            transform: matrix(0.707, 0.707, -0.707, 0.707, 50, 30);
+        }
+
+        .test5 .child-content {
+            /* Inverse matrix - translation is preserved by parent positioning */
+            transform: matrix(0.707, -0.707, 0.707, 0.707, 0, 0);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Matrix Inversion Demo</h1>
+    <p>Testing how to make child elements appear normal despite parent transformations.</p>
+
+    <div class="demo-container">
+        <div>
+            <h3>Test 1: Simple Rotation</h3>
+            <div class="test-box test1">
+                <div class="child-content">Text</div>
+            </div>
+            <p>Parent: rotate(45deg)<br>Child: rotate(-45deg)</p>
+        </div>
+
+        <div>
+            <h3>Test 2: Scale + Rotate</h3>
+            <div class="test-box test2">
+                <div class="child-content">Text</div>
+            </div>
+            <p>Parent: scale(1.5) rotate(30deg)<br>Child: rotate(-30deg) scale(0.66667)</p>
+        </div>
+    </div>
+
+    <div class="demo-container">
+        <div>
+            <h3>Test 1: Simple Rotation</h3>
+            <div class="test-box test1">
+                <div class="child-content">Text</div>
+            </div>
+            <p>Parent: rotate(45deg)<br>Child: rotate(-45deg)</p>
+        </div>
+
+        <div>
+            <h3>Test 2: Scale + Rotate</h3>
+            <div class="test-box test2">
+                <div class="child-content">Text</div>
+            </div>
+            <p>Parent: scale(1.5) rotate(30deg)<br>Child: rotate(-30deg) scale(0.66667)</p>
+        </div>
+
+        <div>
+            <h3>Test 3: Matrix Transform</h3>
+            <div class="test-box test3">
+                <div class="child-content">Text</div>
+            </div>
+            <p>Parent: matrix(0.707, 0.707, -0.707, 0.707, 0, 0)<br>Child: inverse matrix</p>
+        </div>
+
+        <div>
+            <h3>Test 4: Translate + Matrix</h3>
+            <div class="test-box test4">
+                <div class="child-content">Text</div>
+            </div>
+            <p>Parent: translate(50px, 30px) + matrix<br>Child: inverse matrix only</p>
+        </div>
+
+        <div>
+            <h3>Test 5: Matrix with Translation</h3>
+            <div class="test-box test5">
+                <div class="child-content">Text</div>
+            </div>
+            <p>Parent: matrix(..., 50, 30)<br>Child: inverse matrix, translation preserved</p>
+        </div>
+    </div>
+
+    <script>
+        // Function to calculate 2D matrix inverse
+        function invertMatrix2D(matrix) {
+            const [a, b, c, d, e, f] = matrix;
+
+            // Calculate determinant
+            const det = a * d - b * c;
+
+            if (Math.abs(det) < 1e-10) {
+                throw new Error('Matrix is not invertible (determinant is zero)');
+            }
+
+            // Calculate inverse
+            return [
+                d / det,           // a'
+                -b / det,          // b'
+                -c / det,          // c'
+                a / det,           // d'
+                (c * f - d * e) / det,  // e'
+                (b * e - a * f) / det   // f'
+            ];
+        }
+
+        // Test the inversion function
+        const testMatrix = [0.707, 0.707, -0.707, 0.707, 0, 0];
+        const inverse = invertMatrix2D(testMatrix);
+
+        console.log('Original matrix:', testMatrix);
+        console.log('Inverse matrix:', inverse.map(x => x.toFixed(6)));
+
+        // Verify by multiplying original × inverse should = identity
+        function multiplyMatrix(m1, m2) {
+            return [
+                m1[0] * m2[0] + m1[2] * m2[1],
+                m1[1] * m2[0] + m1[3] * m2[1],
+                m1[0] * m2[2] + m1[2] * m2[3],
+                m1[1] * m2[2] + m1[3] * m2[3],
+                m1[0] * m2[4] + m1[2] * m2[5] + m1[4],
+                m1[1] * m2[4] + m1[3] * m2[5] + m1[5]
+            ];
+        }
+
+        // Test with matrices that include translation
+        console.log('\n--- Translation Tests ---');
+
+        // Test matrix with translation
+        const matrixWithTranslation = [0.707, 0.707, -0.707, 0.707, 50, 30];
+        const inverseWithTranslation = invertMatrix2D(matrixWithTranslation);
+
+        console.log('Matrix with translation:', matrixWithTranslation);
+        console.log('Inverse (note: e,f components):', inverseWithTranslation.map(x => x.toFixed(6)));
+
+        // For child elements, we want to invert only the linear transformation part
+        // and set translation to 0 (since positioning is handled by parent)
+        const childInverse = [...inverseWithTranslation];
+        childInverse[4] = 0; // e = 0
+        childInverse[5] = 0; // f = 0
+
+        console.log('Child inverse (translation zeroed):', childInverse.map(x => x.toFixed(6)));
+
+        // Verify the linear part
+        const linearPart = [matrixWithTranslation[0], matrixWithTranslation[1],
+        matrixWithTranslation[2], matrixWithTranslation[3], 0, 0];
+        const linearInverse = [childInverse[0], childInverse[1],
+        childInverse[2], childInverse[3], 0, 0];
+        const linearIdentity = multiplyMatrix(linearPart, linearInverse);
+        console.log('Linear part × Linear inverse =', linearIdentity.map(x => x.toFixed(6)));
+    </script>
+</body>
+
+</html>

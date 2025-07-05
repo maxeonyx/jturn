@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS Transform: Square to N-gon Sector Rhombus with Star</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .demo-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        input[type="range"] {
+            width: 200px;
+        }
+
+        .value-display {
+            background: #f8f9fa;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            color: #333;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .shapes-container {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 40px 0;
+        }
+
+        .shape-demo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .shape-label {
+            font-weight: 600;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .square {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 2px solid #333;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .square::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 49%, rgba(255, 255, 255, 0.3) 50%, transparent 51%);
+        }
+
+        /* The main CSS transform formula */
+        .rhombus {
+            --count: 6;
+            /* Default value */
+
+            /* Central angle of N-gon sector = 2π/N */
+            --central-angle: calc(360deg / var(--count));
+
+            /* Matrix coefficients for the squash transformation */
+            --cos-angle: cos(var(--central-angle));
+            --sin-angle: sin(var(--central-angle));
+
+            /* Squash matrix: [1, 0, cos(2π/N), sin(2π/N), 0, 0] */
+            transform: matrix(1, 0, var(--cos-angle), var(--sin-angle), 0, 0);
+        }
+
+        /* Star container */
+        .star-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .star-square {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            border: 2px solid #333;
+            position: absolute;
+            transform-origin: top left;
+            transition: all 0.3s ease;
+        }
+
+        .star-square::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 49%, rgba(255, 255, 255, 0.4) 50%, transparent 51%);
+        }
+
+        .star-square.transformed {
+            --count: 6;
+            --central-angle: calc(360deg / var(--count));
+            --cos-angle: cos(var(--central-angle));
+            --sin-angle: sin(var(--central-angle));
+        }
+
+        .reference-polygon {
+            width: 120px;
+            height: 120px;
+            position: relative;
+        }
+
+        .polygon {
+            width: 100%;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .info-panel {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .formula {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        .angles-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .angle-info {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+
+        .angle-info h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .angle-info .value {
+            font-family: 'Monaco', 'Menlo', monospace;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .presets {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .preset-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: background 0.2s ease;
+        }
+
+        .preset-btn:hover {
+            background: #5a67d8;
+        }
+
+        .star-info {
+            background: #fff5f5;
+            border-left: 4px solid #ff6b6b;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+
+        .star-info h3 {
+            color: #c53030;
+            margin-top: 0;
+        }
+
+        @media (max-width: 768px) {
+            .shapes-container {
+                flex-direction: column;
+                gap: 30px;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .control-group {
+                justify-content: space-between;
+            }
+
+            .star-container {
+                width: 250px;
+                height: 250px;
+            }
+
+            .star-square {
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>CSS Transform: Square to N-gon Sector Rhombus with Star</h1>
+
+        <div class="demo-section">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="nValue">N (sides):</label>
+                    <input type="range" id="nValue" min="3" max="12" value="6" step="1">
+                    <div class="value-display" id="nDisplay">6</div>
+                </div>
+            </div>
+
+            <div class="presets">
+                <button class="preset-btn" onclick="setN(3)">Triangle (3)</button>
+                <button class="preset-btn" onclick="setN(4)">Square (4)</button>
+                <button class="preset-btn" onclick="setN(5)">Pentagon (5)</button>
+                <button class="preset-btn" onclick="setN(6)">Hexagon (6)</button>
+                <button class="preset-btn" onclick="setN(8)">Octagon (8)</button>
+                <button class="preset-btn" onclick="setN(12)">Dodecagon (12)</button>
+            </div>
+
+            <div class="shapes-container">
+                <div class="shape-demo">
+                    <div class="shape-label">Original Square</div>
+                    <div class="square"></div>
+                </div>
+
+                <div class="shape-demo">
+                    <div class="shape-label">→</div>
+                </div>
+
+                <div class="shape-demo">
+                    <div class="shape-label">Transformed Rhombus</div>
+                    <div class="square rhombus" id="rhombus"></div>
+                </div>
+
+                <div class="shape-demo">
+                    <div class="shape-label">N-gon Star Pattern</div>
+                    <div class="star-container" id="starContainer">
+                        <!-- Star squares will be generated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="shape-demo">
+                    <div class="shape-label">Reference N-gon</div>
+                    <div class="reference-polygon">
+                        <svg class="polygon" id="polygon" viewBox="-60 -60 120 120">
+                            <g id="polygonGroup"></g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <h3>CSS Transform Formula</h3>
+                <div class="formula">/* Mathematically Correct Squash Matrix Transform */
+                    .rhombus {
+                    --count: <span id="formulaN">6</span>;
+                    --central-angle: calc(360deg / var(--count));
+                    --cos-angle: cos(var(--central-angle));
+                    --sin-angle: sin(var(--central-angle));
+
+                    /* Squash Matrix: [1, 0, cos(2π/N), sin(2π/N), 0, 0] */
+                    transform: matrix(1, 0, var(--cos-angle), var(--sin-angle), 0, 0);
+                    }
+
+                    /* Multi-stage Star Transformation:
+                    1. translateToOrigin: [1, 0, 0, 1, -30, -30]
+                    2. squashMatrix: [1, 0, cos(2π/N), sin(2π/N), 0, 0]
+                    3. rotateToPoint: [cos(θ), sin(θ), -sin(θ), cos(θ), 0, 0]
+                    4. translateOutward: [1, 0, 0, 1, radius, 0]
+                    5. rotateFinal: [cos(φ), sin(φ), -sin(φ), cos(φ), 0, 0]
+
+                    Final = rotateFinal × translateOutward × rotateToPoint × squashMatrix × translateToOrigin */</div>
+
+                <div class="star-info">
+                    <h3>N-gon Star Multi-Stage Transformation</h3>
+                    <p>Each star point is created through 5 sequential matrix transformations:</p>
+                    <ol>
+                        <li><strong>Translate to Origin:</strong> Center the square at (0,0) for proper rotation</li>
+                        <li><strong>Squash Matrix:</strong> Apply the rhombus shear transformation</li>
+                        <li><strong>Rotate to Point:</strong> Orient the rhombus to point outward from center</li>
+                        <li><strong>Translate Outward:</strong> Move the shape away from center by radius</li>
+                        <li><strong>Rotate Final:</strong> Position the point around the star circumference</li>
+                    </ol>
+                    <p>The final transformation is the matrix product: <code>T₅ × T₄ × T₃ × T₂ × T₁</code></p>
+                </div>
+
+                <div class="angles-display" id="anglesDisplay">
+                    <!-- Angles will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const nSlider = document.getElementById('nValue');
+        const nDisplay = document.getElementById('nDisplay');
+        const rhombus = document.getElementById('rhombus');
+        const formulaN = document.getElementById('formulaN');
+        const anglesDisplay = document.getElementById('anglesDisplay');
+        const polygonGroup = document.getElementById('polygonGroup');
+        const starContainer = document.getElementById('starContainer');
+
+        function updateTransform() {
+            const n = parseInt(nSlider.value);
+            nDisplay.textContent = n;
+            formulaN.textContent = n;
+
+            // Update CSS custom property
+            rhombus.style.setProperty('--count', n);
+
+            // Update angles display
+            updateAnglesDisplay(n);
+
+            // Update reference polygon
+            updatePolygon(n);
+
+            // Update star
+            updateStar(n);
+        }
+
+        function updateAnglesDisplay(n) {
+            const angle = Math.PI / n;
+            const rhombusAcute = (2 * Math.PI / n) * (180 / Math.PI);
+            const rhombusObtuse = 180 - rhombusAcute;
+            const baseAngle = (Math.PI / 2 - Math.PI / n) * (180 / Math.PI);
+
+            anglesDisplay.innerHTML = `
+                <div class="angle-info">
+                    <h4>Rhombus Acute Angle</h4>
+                    <div class="value">${rhombusAcute.toFixed(1)}°</div>
+                </div>
+                <div class="angle-info">
+                    <h4>Rhombus Obtuse Angle</h4>
+                    <div class="value">${rhombusObtuse.toFixed(1)}°</div>
+                </div>
+                <div class="angle-info">
+                    <h4>Triangle Base Angles</h4>
+                    <div class="value">${baseAngle.toFixed(1)}°</div>
+                </div>
+                <div class="angle-info">
+                    <h4>Triangle Vertex Angle</h4>
+                    <div class="value">${rhombusAcute.toFixed(1)}°</div>
+                </div>
+            `;
+        }
+
+        function updatePolygon(n) {
+            let path = 'M ';
+            const radius = 50;
+
+            for (let i = 0; i < n; i++) {
+                const angle = (2 * Math.PI * i) / n - Math.PI / 2;
+                const x = radius * Math.cos(angle);
+                const y = radius * Math.sin(angle);
+                path += `${x},${y} `;
+            }
+            path += 'Z';
+
+            // Create sector lines
+            let sectors = '';
+            for (let i = 0; i < n; i++) {
+                const angle = (2 * Math.PI * i) / n - Math.PI / 2;
+                const x = radius * Math.cos(angle);
+                const y = radius * Math.sin(angle);
+                sectors += `<line x1="0" y1="0" x2="${x}" y2="${y}" stroke="#999" stroke-width="1" opacity="0.5"/>`;
+            }
+
+            polygonGroup.innerHTML = `
+                <path d="${path}" fill="rgba(102, 126, 234, 0.3)" stroke="#667eea" stroke-width="2"/>
+                ${sectors}
+                <circle cx="0" cy="0" r="2" fill="#333"/>
+            `;
+        }
+
+        function updateStar(n) {
+            // Clear existing star squares
+            starContainer.innerHTML = '';
+
+            const radius = 0; // Distance from center
+            const centralAngleRad = (2 * Math.PI) / n;
+
+            for (let i = 0; i < n; i++) {
+                const starSquare = document.createElement('div');
+                starSquare.className = 'star-square';
+
+                // Multi-stage transformation breakdown:
+                // The goal: create rhombi that point outward from the center like star rays
+
+                // 1. Translate to origin (center the square at 0,0)
+                const translateToOrigin = [1, 0, 0, 1, 0, 0];
+
+                // 2. Apply squash transformation (rhombus shear)
+                // This creates the rhombus shape but doesn't orient it correctly yet
+                const cosAngle = Math.cos(centralAngleRad);
+                const sinAngle = Math.sin(centralAngleRad);
+                const squashMatrix = [1, 0, cosAngle, sinAngle, 0, 0];
+
+                // 3. Rotate to orient the rhombus correctly for star pointing
+                // The squash creates a rhombus, but we need to rotate it so the acute angle points outward
+                // For a proper star, we want the "sharp" end of the rhombus pointing radially outward
+                const orientAngle = -centralAngleRad / 2; // Rotate to align acute angle with radial direction
+                const cosOrient = Math.cos(orientAngle);
+                const sinOrient = Math.sin(orientAngle);
+                const orientMatrix = [cosOrient, sinOrient, -sinOrient, cosOrient, 0, 0];
+
+                // 4. Translate outward by radius
+                const translateOutward = [1, 0, 0, 1, radius, 0];
+
+                // 5. Rotate into final position around star
+                const finalAngle = (2 * Math.PI * i) / n - Math.PI / 2; // Start from top
+                const cosFinal = Math.cos(finalAngle);
+                const sinFinal = Math.sin(finalAngle);
+                const rotateFinal = [cosFinal, sinFinal, -sinFinal, cosFinal, 0, 0];
+
+                // Matrix multiplication helper function
+                function multiplyMatrix(m1, m2) {
+                    return [
+                        m1[0] * m2[0] + m1[2] * m2[1],          // a
+                        m1[1] * m2[0] + m1[3] * m2[1],          // b
+                        m1[0] * m2[2] + m1[2] * m2[3],          // c
+                        m1[1] * m2[2] + m1[3] * m2[3],          // d
+                        m1[0] * m2[4] + m1[2] * m2[5] + m1[4],  // e
+                        m1[1] * m2[4] + m1[3] * m2[5] + m1[5]   // f
+                    ];
+                }
+
+                // Combine all transformations:
+                // Final = rotateFinal × translateOutward × orientMatrix × squashMatrix × translateToOrigin
+                let combined = translateToOrigin;
+                combined = multiplyMatrix(squashMatrix, combined);
+                combined = multiplyMatrix(orientMatrix, combined);
+                combined = multiplyMatrix(translateOutward, combined);
+                combined = multiplyMatrix(rotateFinal, combined);
+
+                // Apply the final transformation
+                starSquare.style.transform = `matrix(${combined[0].toFixed(3)}, ${combined[1].toFixed(3)}, ${combined[2].toFixed(3)}, ${combined[3].toFixed(3)}, ${combined[4].toFixed(1)}, ${combined[5].toFixed(1)})`;
+
+                starContainer.appendChild(starSquare);
+            }
+        }
+
+        function setN(value) {
+            nSlider.value = value;
+            updateTransform();
+        }
+
+        // Event listeners
+        nSlider.addEventListener('input', updateTransform);
+
+        // Initialize
+        updateTransform();
+    </script>
+</body>
+
+</html>

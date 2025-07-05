@@ -1,0 +1,321 @@
+/*
+ * Dropzones CSS Library
+ * A flexible drag and drop system with radial drop targets (drop stars)
+ *
+ * Core concepts:
+ * - .drop-area: fundamental drop zone class
+ * - .drop-star: container for radial arrangement of drop areas
+ * - .draggable: elements that can be dragged
+ * - Global visibility controls via CSS custom properties
+ */
+
+:root {
+    /* Library configuration */
+    --dropzones-visible: 1;
+    /* 0 to hide all drop zones, 1 to show */
+    --dropzones-drag-active: 0;
+    /* 1 when dragging is active */
+
+    /* Drop star sizing - larger to ensure labels sit outside nodes */
+    --drop-star-size: 6em;
+    --drop-area-size: calc(var(--drop-star-size) / 2.5);
+
+    /* Draggable node sizing */
+    --draggable-size: 1.5em;
+
+    /* Animation timings */
+    --dropzone-transition: 0.2s ease;
+    --drag-transition: 0.1s ease;
+}
+
+/*
+ * DRAGGABLE ELEMENTS
+ * Elements that can be picked up and dragged
+ */
+
+.draggable {
+    cursor: grab;
+    transition: all var(--drag-transition);
+    user-select: none;
+}
+
+.draggable:active {
+    cursor: grabbing;
+}
+
+/* Dragging state - applied when element is being dragged */
+.draggable.dragging {
+    opacity: 0.5;
+    transform: scale(0.8);
+    pointer-events: none;
+}
+
+/* Hide drop zones on the element being dragged */
+.draggable.dragging~.drop-star .drop-area,
+.node-container.dragging .drop-area {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/*
+ * DROP AREAS
+ * Individual drop targets that can accept dragged elements
+ */
+
+.drop-area {
+    position: absolute;
+    width: var(--drop-area-size);
+    height: var(--drop-area-size);
+    border: 2px dashed rgba(var(--drop-rgb, 128, 128, 128), 0.8);
+    background: rgba(var(--drop-rgb, 128, 128, 128), 0.1);
+
+    /* Visibility control - only show when dragging is active */
+    opacity: 0;
+    pointer-events: none;
+
+    /* No transitions on the zones themselves - they're invisible UI elements */
+    transform-origin: center;
+
+    /* Center content */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+/* Drop area hover effects */
+.drop-area:hover {
+    transform: scale(1.1);
+    z-index: 10;
+    background: rgba(var(--drop-rgb, 128, 128, 128), 0.3);
+}
+
+/* Show drop areas when dragging is active */
+.drag-active .drop-area {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Different action types - only visible when dragging */
+/* First drop area - red theme */
+.drop-area:nth-of-type(1) {
+    --drop-rgb: 255, 0, 0;
+}
+
+/* Second drop area - green theme */
+.drop-area:nth-of-type(2) {
+    --drop-rgb: 0, 255, 0;
+}
+
+/* Third drop area - blue theme */
+.drop-area:nth-of-type(3) {
+    --drop-rgb: 0, 0, 255;
+}
+
+/* Fourth drop area - yellow theme */
+.drop-area:nth-of-type(4) {
+    --drop-rgb: 255, 255, 0;
+}
+
+/* Fifth drop area - purple theme */
+.drop-area:nth-of-type(5) {
+    --drop-rgb: 255, 0, 255;
+}
+
+/*
+ * DROP STAR CONTAINER
+ * Arranges drop areas in a radial pattern around a central point
+ */
+
+.drop-star {
+    position: relative;
+    width: var(--drop-star-size);
+    height: var(--drop-star-size);
+}
+
+/* Position drop areas within the star */
+.drop-star .drop-area {
+    left: 50%;
+    top: 50%;
+    transform-origin: top left;
+
+    /* Apply star transformation matrices */
+    transform: var(--hover-scale, scale(1)) var(--star-transform, scale(1)) var(--hover-translate, translate(0, 0));
+}
+
+.drop-star .drop-area:hover {
+    --hover-scale: scale(1.5);
+    --hover-translate: translate(calc(-1 * var(--drop-area-size)/4), calc(-1 * var(--drop-area-size)/4));
+}
+
+/* Child content that should remain upright despite transformations */
+.drop-star .drop-area>* {
+    transform: var(--star-transform-inverse, scale(1));
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 0.15em 0.3em;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    font-size: 0.6em;
+
+    /* Quick, snappy transitions for labels only */
+    transition: all 0.05s ease;
+}
+
+.drop-star .drop-area:hover>* {
+    transform: var(--star-transform-inverse, scale(1)) scale(0.8);
+    background: rgba(255, 255, 255, 1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    font-size: 0.7em;
+}
+
+/*
+ * STAR TRANSFORMATION MATRICES
+ * Pre-calculated transformations for different numbers of drop areas
+ */
+
+/* 1-pointed star (single drop area) */
+.drop-star .drop-area:nth-last-child(1):nth-child(1) {
+    --star-transform: translate(calc(-1 * var(--drop-area-size)), calc(-1 * var(--drop-area-size))) matrix(2, 0, 0, 2, 0, 0);
+    --star-transform-inverse: matrix(0.5, 0, 0, 0.5, 0, 0);
+    --hover-translate: translate(0, 0);
+}
+
+/* 2-pointed star (2 drop areas) */
+.drop-star .drop-area:nth-last-child(2):nth-child(1) {
+    --star-transform: translate(calc(-1 * var(--drop-area-size)), calc(-1 * var(--drop-area-size))) matrix(2, 0, 0, 1, 0, 0);
+    --star-transform-inverse: matrix(0.5, 0, 0, 1, 0, 0);
+}
+
+.drop-star .drop-area:nth-last-child(1):nth-child(2) {
+    --star-transform: translate(calc(1 * var(--drop-area-size)), calc(1 * var(--drop-area-size))) matrix(-2, 0, 0, -1, 0, 0);
+    --star-transform-inverse: matrix(-0.5, 0, 0, -1, 0, 0);
+}
+
+/* 3-pointed star (3 drop areas) */
+.drop-star .drop-area:nth-last-child(3):nth-child(1) {
+    --star-transform: matrix(-1.125833, -0.650000, 1.125833, -0.650000, 0.000000, 0.000000);
+    --star-transform-inverse: matrix(-0.444116, 0.444116, -0.769231, -0.769231, 0.000000, 0.000000);
+}
+
+.drop-star .drop-area:nth-last-child(2):nth-child(2) {
+    --star-transform: matrix(1.125833, -0.650000, 0.000000, 1.300000, 0.000000, 0.000000);
+    --star-transform-inverse: matrix(0.888231, 0.444116, -0.000000, 0.769231, 0.000000, 0.000000);
+}
+
+.drop-star .drop-area:nth-last-child(1):nth-child(3) {
+    --star-transform: matrix(0.000000, 1.300000, -1.125833, -0.650000, 0.000000, 0.000000);
+    --star-transform-inverse: matrix(-0.444116, -0.888231, 0.769231, 0.000000, 0.000000, 0.000000);
+}
+
+/* 4-pointed star (4 drop areas) */
+.drop-star .drop-area:nth-last-child(4):nth-child(1) {
+    --star-transform: matrix(-0.707107, -0.707107, 0.707107, -0.707107, 0.000000, 0.000000);
+    --star-transform-inverse: matrix(-0.707107, 0.707107, -0.707107, -0.707107, 0.000000, 0.000000);
+}
+
+.drop-star .drop-area:nth-last-child(3):nth-child(2) {
+    --star-transform: matrix(0.707107, -0.707107, 0.707107, 0.707107, 0.000000, 0.000000);
+    --star-transform-inverse: matrix(0.707107, 0.707107, -0.707107, 0.707107, 0.000000, 0.000000);
+}
+
+.drop-star .drop-area:nth-last-child(2):nth-child(3) {
+    --star-transform: matrix(0.707107, 0.707107, -0.707107, 0.707107, 0.000000, 0.000000);
+    --star-transform-inverse: matrix(0.707107, -0.707107, 0.707107, 0.707107, 0.000000, 0.000000);
+}
+
+.drop-star .drop-area:nth-last-child(1):nth-child(4) {
+    --star-transform: matrix(-0.707107, 0.707107, -0.707107, -0.707107, 0.000000, 0.000000);
+    --star-transform-inverse: matrix(-0.707107, -0.707107, 0.707107, -0.707107, 0.000000, 0.000000);
+}
+
+/* 5-pointed star (5 drop areas) */
+.drop-star .drop-area:nth-last-child(5):nth-child(1) {
+    --star-transform: matrix(-0.587785, -0.809017, 0.587785, -0.809017, 0.000000, 0.000000);
+    --star-transform-inverse: matrix(-0.850651, 0.850651, -0.618034, -0.618034, 0.000000, 0.000000);
+}
+
+.drop-star .drop-area:nth-last-child(4):nth-child(2) {
+    --star-transform: matrix(0.587785, -0.809017, 0.951057, 0.309017, 0.000000, 0.000000);
+    --star-transform-inverse: matrix(0.324920, 0.850651, -1.000000, 0.618034, 0.000000, 0.000000);
+}
+
+.drop-star .drop-area:nth-last-child(3):nth-child(3) {
+    --star-transform: matrix(0.951057, 0.309017, 0.000000, 1.000000, 0.000000, 0.000000);
+    --star-transform-inverse: matrix(1.051462, -0.324920, 0.000000, 1.000000, 0.000000, 0.000000);
+}
+
+.drop-star .drop-area:nth-last-child(2):nth-child(4) {
+    --star-transform: matrix(0.000000, 1.000000, -0.951057, 0.309017, 0.000000, 0.000000);
+    --star-transform-inverse: matrix(0.324920, -1.051462, 1.000000, 0.000000, 0.000000, 0.000000);
+}
+
+.drop-star .drop-area:nth-last-child(1):nth-child(5) {
+    --star-transform: matrix(-0.951057, 0.309017, -0.587785, -0.809017, 0.000000, 0.000000);
+    --star-transform-inverse: matrix(-0.850651, -0.324920, 0.618034, -1.000000, 0.000000, 0.000000);
+}
+
+/*
+ * DRAG CURSOR
+ * Visual feedback that follows the mouse during drag operations
+ */
+
+.drag-cursor {
+    position: fixed;
+    pointer-events: none;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 0.25em 0.5em;
+    border-radius: 4px;
+    font-size: 0.7em;
+    font-weight: bold;
+    transform: translate(10px, -10px);
+    opacity: 0;
+    transition: opacity var(--drag-transition);
+}
+
+.drag-cursor.active {
+    opacity: 1;
+}
+
+/* Drag cursor color themes to match drop areas */
+.drag-cursor.type-1 {
+    background: rgba(255, 0, 0, 0.9);
+    color: #fff;
+}
+
+.drag-cursor.type-2 {
+    background: rgba(0, 255, 0, 0.9);
+    color: #000;
+}
+
+.drag-cursor.type-3 {
+    background: rgba(0, 0, 255, 0.9);
+    color: #fff;
+}
+
+.drag-cursor.type-4 {
+    background: rgba(255, 255, 0, 0.9);
+    color: #000;
+}
+
+.drag-cursor.type-5 {
+    background: rgba(255, 0, 255, 0.9);
+    color: #fff;
+}
+
+/*
+ * UTILITY CLASSES
+ */
+
+/* Enable drop zones when dragging is active */
+.drag-active {
+    --dropzones-drag-active: 1;
+}
+
+/* Enable pointer events on drop star when dragging is active */
+.drag-active .drop-star {
+    pointer-events: auto;
+}

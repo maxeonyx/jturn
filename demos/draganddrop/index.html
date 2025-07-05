@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropzones Library Demo</title>
+    <link rel="stylesheet" href="dropzones.css">
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 2em;
+            min-height: 100vh;
+            overflow-x: auto;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(8em, 1fr));
+            gap: 4em;
+            max-width: 60em;
+            margin: 0 auto;
+        }
+
+        .node-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1em;
+        }
+
+        /* Position drop star to center over the node */
+        .node-container .drop-star {
+            position: absolute;
+            top: calc(var(--draggable-size) / 2);
+            /* Center on the node */
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            /* Above the node for interaction when visible */
+            pointer-events: none;
+            /* Allow clicks to pass through to node when not dragging */
+        }
+
+        .commit {
+            width: var(--draggable-size);
+            height: var(--draggable-size);
+            border-radius: 50%;
+            border: 2px solid #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8em;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            position: relative;
+            background: #4a9eff;
+        }
+
+
+        .node:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 1em rgba(255, 255, 255, 0.3);
+        }
+
+        .instructions {
+            text-align: center;
+            margin-bottom: 2em;
+            color: #ccc;
+            font-size: 0.9em;
+        }
+
+        .drag-preview {
+            position: fixed;
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0.8;
+            transform: scale(0.8);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="instructions">
+        <h1>Dropzones Library Demo</h1>
+        <p>Drag nodes to see drop zones appear on other nodes. Each node has 3 drop areas: Squash (red), Merge (green),
+            and Rebase (blue).</p>
+        <p>Drop zones only appear when dragging is active.</p>
+    </div>
+
+    <div class="demo-grid">
+        <div class="node-container">
+            <div class="commit draggable" data-id="commit-a">A</div>
+            <div class="drop-star">
+                <div class="drop-area squash" data-action="squash" data-target="commit-a">
+                    <span>Squash</span>
+                </div>
+                <div class="drop-area merge" data-action="merge" data-target="commit-a">
+                    <span>Merge</span>
+                </div>
+                <div class="drop-area rebase" data-action="rebase" data-target="commit-a">
+                    <span>Rebase</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="node-container">
+            <div class="commit draggable" data-id="commit-b">B</div>
+            <div class="drop-star">
+                <div class="drop-area squash" data-action="squash" data-target="commit-b">
+                    <span>Squash</span>
+                </div>
+                <div class="drop-area merge" data-action="merge" data-target="commit-b">
+                    <span>Merge</span>
+                </div>
+                <div class="drop-area rebase" data-action="rebase" data-target="commit-b">
+                    <span>Rebase</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="node-container">
+            <div class="commit draggable" data-id="commit-c">C</div>
+
+            <div class="drop-star">
+                <div class="drop-area squash" data-action="squash" data-target="commit-c">
+                    <span>Squash</span>
+                </div>
+                <div class="drop-area merge" data-action="merge" data-target="commit-c">
+                    <span>Merge</span>
+                </div>
+                <div class="drop-area rebase" data-action="rebase" data-target="commit-c">
+                    <span>Rebase</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="node-container">
+            <div class="commit draggable" data-id="commit-d">D</div>
+
+            <div class="drop-star">
+                <div class="drop-area squash" data-action="squash" data-target="commit-d">
+                    <span>Squash</span>
+                </div>
+                <div class="drop-area merge" data-action="merge" data-target="commit-d">
+                    <span>Merge</span>
+                </div>
+                <div class="drop-area rebase" data-action="rebase" data-target="commit-d">
+                    <span>Rebase</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="node-container">
+            <div class="commit draggable" data-id="commit-e">E</div>
+
+            <div class="drop-star">
+                <div class="drop-area squash" data-action="squash" data-target="commit-e">
+                    <span>Squash</span>
+                </div>
+                <div class="drop-area merge" data-action="merge" data-target="commit-e">
+                    <span>Merge</span>
+                </div>
+                <div class="drop-area rebase" data-action="rebase" data-target="commit-e">
+                    <span>Rebase</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="node-container">
+            <div class="commit draggable" data-id="commit-f">F</div>
+
+            <div class="drop-star">
+                <div class="drop-area squash" data-action="squash" data-target="commit-f">
+                    <span>Squash</span>
+                </div>
+                <div class="drop-area merge" data-action="merge" data-target="commit-f">
+                    <span>Merge</span>
+                </div>
+                <div class="drop-area rebase" data-action="rebase" data-target="commit-f">
+                    <span>Rebase</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="drag-cursor"></div>
+
+    <script src="dropzones.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dropzones = new Dropzones({
+                onDragStart: (element, data) => {
+                    console.log('Started dragging:', data.id);
+                },
+
+                onDrop: (sourceElement, dropTarget, data) => {
+                    const sourceId = data.id;
+                    const targetId = dropTarget.target;
+                    const action = dropTarget.action;
+
+                    console.log(`Executing ${action}: ${sourceId} → ${targetId}`);
+
+                    // Show visual feedback
+                    dropTarget.element.style.background = 'rgba(255, 255, 255, 0.8)';
+                    setTimeout(() => {
+                        dropTarget.element.style.background = '';
+                    }, 200);
+                },
+
+                onDragEnd: (element, data) => {
+                    console.log('Ended dragging:', data.id);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
