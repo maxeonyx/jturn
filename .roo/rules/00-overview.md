@@ -3,7 +3,7 @@
 This document provides a high-level overview of the J-Turn project and the structure of the AI assistant's instructions.
 
 ## Project Vision
-The primary focus of this project is to create an innovative user experience for a source control system, leveraging the unique features of `jj`.
+The primary focus of this project is to create an innovative graphical user experience for `jj`, a new Git-compatible source control system, leveraging the unique features of `jj`.
 
 ## Key Principles
 - Prioritize UI/UX design and simplicity.

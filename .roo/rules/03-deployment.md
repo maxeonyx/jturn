@@ -4,7 +4,7 @@
 The app is deployed via GitHub workflows to GitHub Pages. The AI assistant must follow these steps:
 
 1. **Update Version**
-   - Update the version in `package.json`.
+   - Update the version in `site/package.json`.
    - Update the version history in `notes/release-notes.md`.
    - Commit
 
