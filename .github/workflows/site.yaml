@@ -1,0 +1,125 @@
+name: Deploy Demos and Site
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'demo/**/*'
+      - 'site/**/*'
+
+jobs:
+  build-html:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - dir: demo/css_rhombus_star
+            artifact: web-css-rhombus-star
+          - dir: demo/dropzones_with_children
+            artifact: web-dropzones-with-children
+          - dir: demo/draganddrop
+            artifact: web-draganddrop
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Upload Demo Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.dir }}
+          include-hidden-files: true
+
+  build-vue:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - in: site
+            out: .
+            artifact: web-site
+          # - in: demo/graph
+          #   out: demo/graph
+          #   artifact: web-graph
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: ${{ matrix.in }}/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+        working-directory: ${{ matrix.in }}
+
+      - name: Build Project
+        run: npm run build
+        working-directory: ${{ matrix.in }}
+
+      - name: Upload Site Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.in }}/dist/**/*
+          include-hidden-files: true
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build-html, build-vue]
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      ARTIFACT_MAP: |
+        web-site=.
+        web-css-rhombus-star=demo/css_rhombus_star
+        web-dropzones-with-children=demo/dropzones_with_children
+        web-draganddrop=demo/draganddrop
+      # web-graph=demo/graph
+    steps:
+      - name: Download Web Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: web-*
+          path: ./artifacts
+
+      - name: Organize Site Structure
+        run: |
+          mkdir -p ./site-content
+
+          # Copy artifacts to their destinations
+          while IFS= read -r line; do
+            if [ -n "$line" ]; then
+              artifact=$(echo "$line" | cut -d'=' -f1)
+              dest_path=$(echo "$line" | cut -d'=' -f2-)
+
+              if [ -d "./artifacts/$artifact" ]; then
+                if [ "$dest_path" = "." ]; then
+                  echo "Copying $artifact to root"
+                  cp -r ./artifacts/$artifact/* ./site-content/
+                else
+                  echo "Copying $artifact to $dest_path"
+                  mkdir -p "./site-content/$dest_path"
+                  cp -r ./artifacts/$artifact/* "./site-content/$dest_path/"
+                fi
+              fi
+            fi
+          done <<< "$ARTIFACT_MAP"
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./site-content
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
