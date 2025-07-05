@@ -1,13 +1,12 @@
-# Deployment Guidelines
-
-This document provides explicit instructions for deploying the JJ VCS GUI project.
+# Instructions to the AI Assistant - Deployment Guidelines
 
 ## Deployment Process
-The app is deployed via GitHub workflows to GitHub Pages. Follow these steps:
+The app is deployed via GitHub workflows to GitHub Pages. The AI assistant must follow these steps:
 
 1. **Update Version**
    - Update the version in `package.json`.
    - Update the version history in `notes/release-notes.md`.
+   - Commit
 
 2. **Push Changes**
    - Run `git push` to push the latest changes to the repository.
@@ -19,7 +18,7 @@ The app is deployed via GitHub workflows to GitHub Pages. Follow these steps:
 
 4. **Verify Deployment**
    - Confirm the new version is live:
-     - Request `app-base/version.json` to verify the deployed version.
+     - Request `https://maxeonyx.github.io/jturn/version.json` to verify the deployed version.
 
 5. **Provide Feedback**
    - If successful, share the link to the working application.

@@ -1,23 +1,20 @@
-# Instructions to the AI Assistant - Overview
+# Project Overview for AI Assistant
 
-This document provides a general overview of the project and for the remaining instructions. It serves as a foundation for understanding the project's structure, goals, and best practices.
+This document provides a high-level overview of the J-Turn project and the structure of the AI assistant's instructions.
 
 ## Project Vision
-The primary focus of this project is to create an innovative user experience for a source control system, leveraging the unique features of JJ VCS.
+The primary focus of this project is to create an innovative user experience for a source control system, leveraging the unique features of `jj`.
 
 ## Key Principles
 - Prioritize UI/UX design and simplicity.
 - Ensure seamless integration across all components.
 - Maintain high performance and responsiveness.
 
-## Structure
-The rules are divided into the following sections:
-1. Testing
-2. Development
-3. Iterating
-4. Deployment
-
 Refer to the respective documents for detailed guidelines.
 
+## Related Documents
+- Initial Vision: [`notes/initial-vision.md`](notes/initial-vision.md)
+- `jj` Overview: [`notes/jj.md`](notes/jj.md)
+
 ## Expansion
-As subfolder directories are created, this overview should be expanded to include short summaries and links to their respective `README.md` files for easier navigation and reference.
+The AI assistant is responsible for expanding this overview. As subfolder directories are created, this overview should be expanded to include short summaries and links to their respective `README.md` files for easier navigation and reference.

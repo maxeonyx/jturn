@@ -1,4 +1,4 @@
-# Initial Vision for JJ VCS GUI Project
+# Initial Vision for J-Turn GUI Project
 
 ## Project Overview
 The project aims to create a visual GUI for the JJ Version Control System (VCS). JJ is a modern source control system with unique features:
@@ -8,7 +8,7 @@ The project aims to create a visual GUI for the JJ Version Control System (VCS).
 These features provide the potential for an exceptional graphical experience.
 
 ## Goals
-- **Primary Goal**: Develop a web-based UI for JJ VCS that integrates seamlessly within VSCode and a proprietary website.
+- **Primary Goal**: Develop a web-based UI for J-Turn that integrates seamlessly within VSCode and a proprietary website.
 - **Stretch Goal**: Integrate JOSH for advanced workflows.
 
 ## Approach
@@ -47,15 +47,3 @@ The primary innovation of this project lies in the user experience of a source c
 - **Remote JJ Server Operations**: Efficient communication with JJ.
 - **Rust Server Process**: Backend support for the UI, used by the VSCode extension.
 - **JJ as a Library**: Utilize JJ beyond its CLI capabilities. Don't require users to install JJ CLI.
-
-## Research Notes
-### JJ Documentation
-
-- To be completed.
-
-### JOSH Documentation
-
-- To be completed.
-
----
-This document serves as the foundation for the project's vision. Expand on any unclear or missing parts of the vision as needed.

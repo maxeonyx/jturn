@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <h1>Welcome to JJ VCS</h1>
+    <h1>Welcome to J-Turn</h1>
     <p>This project currently showcases various demos:</p>
     <ul>
       <li v-for="link in demoLinks" :key="link.name">

@@ -1,14 +1,11 @@
 # J-Turn Site
 
-This is the J-Turn project website. Currently, it provides just a brief description of the project vision and links to various demos.
+This is the J-Turn project website.
 
 ## Development
 The site is built using Vue.js.
 
-### Dynamic Demo Links
-1. The Vite plugin scans the `demos/[demoname]/` directories during the build.
-2. A JSON file (`demo-links.json`) is generated containing demo names and paths.
-3. The Vue.js app fetches this JSON file and renders the links dynamically.
+The demos are built separately and added to the final site by the github action, so they will not be available here. Run them independently in their respective directories.
 
 ## Usage
 To run the site locally:
